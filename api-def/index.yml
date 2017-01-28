@@ -1,0 +1,531 @@
+swagger: '2.0'
+info:
+  title: Example API
+  description: The Example API for generation purposes
+  version: "1.0.0"
+# the domain of the service
+host: api.example.scaffold
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /v1
+produces:
+  - application/json
+
+securityDefinitions:
+  NoSecurity:
+    type: apiKey
+    in: header
+    name: Authorization
+  UserSecurity:
+    type: apiKey
+    in: header
+    name: Authorization
+  AdminSecurity:
+    type: apiKey
+    in: header
+    name: Authorization
+
+security:
+  - UserSecurity: [] 
+
+paths:
+  /users:
+    post:
+      summary: Register a user
+      description: |
+        Registers a user, I need to add some kind of nonce or captcha
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: user
+          in: body
+          description: User to register
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/login:
+    post:
+      summary: User Login
+      description: |
+        Create a session for a user,return the token to auth with
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: user
+          in: body
+          description: User to login
+          required: true
+          schema:
+            $ref: '#/definitions/UserLogin'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/SuccessUser'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/logout:
+    get:
+      summary: User Logout
+      description: |
+        Removes a user session
+      tags:
+        - Users
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/forgotpassword:
+    post:
+      summary: Forgot Password
+      description: |
+        Sends an email to the user with a password reset code
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: User
+          in: body
+          description: User to login
+          required: true
+          schema:
+            $ref: '#/definitions/UserForgotPassword'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/forgotpassword/{resetCode}:
+    get:
+      summary: Forgot Password Validate Reset Code
+      description: |
+        Simply checks if reset code is valid that was received from the /users/forgotpassword endpoint
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: resetCode
+          in: path
+          type: string
+          description: Reset code for resetting password
+          required: true
+      tags:
+        - Users
+      responses:
+        200:
+          description: Response as to whether the reset code is valid
+          schema:
+            $ref: '#/definitions/SuccessResetCodeValid'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Forgot Password Reset Password
+      description: |
+        Sets password to new password specified
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: resetCode
+          in: path
+          type: string
+          description: Reset code for resetting password
+          required: true
+        - name: user
+          in: body
+          description: New password for the user
+          required: true
+          schema:
+            $ref: '#/definitions/UserResetPassword'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user/{username}:
+    get:
+      summary: Get a user
+      description: |
+        Gets the users details
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: Returns the user that has been found
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete User
+      description: |
+        Deletes a user.
+      security:
+        - AdminSecurity: []
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user/{username}/followers:
+    get:
+      summary: Followers list
+      description: |
+        Gets the people that are currently following a user
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: List of users is returned
+          schema:
+            $ref: '#/definitions/Users'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user/{username}/following:
+    get:
+      summary: Following list
+      description: |
+        Gets the people that the user is currently following
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: List of users is returned
+          schema:
+            $ref: '#/definitions/Users'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user/{username}/check:
+    get:
+      summary: User exists
+      description: |
+        A quick check to see if the username already exists
+      security:
+        - NoSecurity: []
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: Check complete
+          schema:
+            $ref: '#/definitions/SuccessUserExists'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /user/{username}/following/{followUsername}:
+    put:
+      summary: Follow User
+      description: |
+        Follow another person and their posts
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+        - name: followUsername
+          in: path
+          type: string
+          description: Username of the person the user wants to follow
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Stop Following User
+      description: |
+        Remove a person from list of people the user is following
+      parameters:
+        - name: username
+          in: path
+          type: string
+          description: Username of the user
+          required: true
+        - name: followUsername
+          in: path
+          type: string
+          description: Username of the person to stop following
+          required: true
+      tags:
+        - User
+      responses:
+        200:
+          description: Success message
+          schema:
+            $ref: '#/definitions/Success'
+        400:
+          description: Could not complete operation
+          schema:
+            $ref: '#/definitions/A400Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  NewUser:
+    type: object
+    properties:
+      username:
+        type: string
+        description: User of the user
+      password:
+        type: string
+        description: Password chosen by the user
+      email:
+        type: string
+        description: Email of the user
+      age:
+        type: string
+        description: Age of the user
+      gender:
+        type: string
+        description: Gender of the user
+      country:
+        type: string
+        description: Country of the user
+  UserLogin:
+    type: object
+    properties:
+      username:
+        type: string
+        description: Username of the user
+      password:
+        type: string
+        description: Password of the user
+  UserForgotPassword:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Email of the user
+  UserResetPassword:
+    type: object
+    properties:
+      email:
+        type: string
+        description: Email of the user
+      resetCode:
+        type: string
+        description: Reset Code for resetting password
+      password:
+        type: string
+        description: Password of the user
+
+  # Response objects
+  # Post sucess - list of posts
+  # Comment success - list of comments for post
+  # Add Comment success - return with comment_id
+  # Add user success - return token
+  # Users - get user details
+  # Forgot password - return reset code
+  # login - token
+  #
+  # Error objects
+  # 401 Not authed, no token? token doesn't match
+  # 403 Forbidden, sorry, can't do that - rate limiting later too possibly
+  # 408 Request Timeout - maybe?
+  
+  SuccessUser:
+    properties:
+      token:
+        type: string
+        description: token for the session
+      username:
+        type: string
+        description: The username of the user
+      displayName:
+        type: string
+        description: The displayName of the user
+      email:
+        type: string
+        description: The email of the user
+  SuccessUserExists:
+    properties:
+      userExists:
+        type: boolean
+        description: Whether the username exists
+  SuccessResetCodeValid:
+    properties:
+      valid:
+        type: boolean
+        description: Whether the reset code is valid
+  Users:
+    type: array
+    items:
+      $ref: '#/definitions/User'
+  User:
+    required:
+      - username
+      - isFollowing
+    properties:
+      username:
+        type: string
+        description: The username of the user
+      profilePicture:
+        type: string
+        description: Base64 encoded string value of their profile picture?
+      displayName:
+        type: string
+        description: The name which the user likes to be associated with (non unique)
+      isFollowing:
+        type: boolean
+        description: Whether or not the current user is following the user
+  Success:
+    properties:
+      success:
+        type: boolean
+        description: True for success
+  A400Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+
+responses:
+  Standard500Error:
+    description: Could not perform operation
+    schema:
+      $ref: '#/definitions/Error'
+
