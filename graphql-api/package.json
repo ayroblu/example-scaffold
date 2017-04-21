@@ -1,0 +1,32 @@
+{
+  "name": "example-graphql-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "NODE_ENV=development nodemon --exec babel-node --presets react-app -- index.js",
+    "test": "mocha test/*.test.js",
+    "test:unit": "mocha test/unit.test.js",
+    "test:integration": "mocha test/integration.test.js",
+    "start:dev": "DEBUG=example-api:* npm start"
+  },
+  "dependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-preset-react-app": "^2.2.0",
+    "dataloader": "^1.2.0",
+    "express": "^4.13.4",
+    "express-graphql": "^0.5.1",
+    "graphql": "^0.5.0",
+    "graphql-relay": "^0.4.0",
+    "node-fetch": "^1.5.1",
+    "nodemon": "^1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "chromedriver": "^2.25.1",
+    "mocha": "^3.1.2",
+    "selenium-webdriver": "^3.0.0-beta-3",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0"
+  }
+}
