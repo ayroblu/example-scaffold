@@ -6,7 +6,7 @@ import {
 , GraphQLList
 } from 'graphql'
 
-import PersonType from './PersonType'
+import {PersonType, PersonInputType} from './PersonType'
 
 const QueryType = new GraphQLObjectType({
   name: 'Query'
@@ -28,7 +28,26 @@ const QueryType = new GraphQLObjectType({
     }
   })
 })
+const MutationType = new GraphQLObjectType({
+  name: 'Mutation'
+, description: 'This is a mutation'
+, fields: ()=>({
+    createPerson: {
+      type: PersonType
+    , description: 'Creates a person'
+    , args: {
+        firstName: {type: GraphQLString}
+      , name: {type: GraphQLString}
+      , friends: {type: new GraphQLList(PersonInputType)}
+      }
+    , resolve: (root, person, {mutators}, ast)=>{
+        return mutators.person.create(person)
+      }
+    }
+  })
+})
 
 export default new GraphQLSchema({
   query: QueryType
+, mutation: MutationType
 })
